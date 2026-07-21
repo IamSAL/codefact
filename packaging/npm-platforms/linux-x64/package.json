@@ -1,0 +1,15 @@
+{
+  "name": "codefact-linux-x64",
+  "version": "0.1.1",
+  "description": "codefact prebuilt binary for linux x64",
+  "os": [
+    "linux"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "files": [
+    "codefacts"
+  ],
+  "license": "MIT"
+}

@@ -1,71 +1,57 @@
-# Publish codefacts to npm (quick, single-arch)
+# Publish codefact to npm (cross-platform)
 
-This package **bundles the prebuilt native binary** (macOS arm64) so you can
-`npm i -g` and try it immediately — no GitHub releases needed. For multi-platform
-distribution later, see "Cross-platform" at the bottom.
+Layout (esbuild-style): a tiny main package `codefact` + one package per platform
+carrying that platform's native binary, wired via `optionalDependencies`. npm
+installs only the matching platform package, so `npm i -g codefact` works on any
+supported OS/arch.
 
-## 0. Runtime prerequisites (on any machine that will RUN it)
+- `packaging/npm/` → main `codefact` (shim + optional deps)
+- `packaging/npm-platforms/darwin-arm64/` → `codefact-darwin-arm64` (macOS arm64 binary)
+- `packaging/npm-platforms/linux-x64/` → `codefact-linux-x64` (linux x64 binary)
 
-codefacts drives the native `iii` engine and headless `claude`. Both must exist:
+Installs the commands **`codefacts`** and **`codefact`** (both work).
 
-```sh
-# iii engine (native binary)
-curl -fsSL https://iii.dev/install.sh | sh     # or the installer from iii.dev
-iii --version
-
-# Claude Code
-claude --version && claude login
-```
-
-## 1. Pick a name (unscoped `codefacts` is taken on npm)
-
-Edit `package.json` → `"name"`: use a scope you own, e.g.
-
-```json
-"name": "@yourNpmUser/codefacts"
-```
-
-(Optionally update the `repository` URL.)
-
-## 2. Publish
+## Runtime prerequisites (on any machine that RUNS it)
 
 ```sh
-cd packaging/npm
-npm login
-npm publish --access public      # scoped packages need --access public
+curl -fsSL https://iii.dev/install.sh | sh   # the iii engine (native binary)
+claude --version && claude login             # Claude Code
 ```
 
-## 3. Install + try (end user)
+## Auth once (granular token — avoids a 2FA prompt on every publish)
+
+npmjs.com → avatar → **Access Tokens** → **Generate New Token** → **Granular** →
+Permissions **Packages and scopes: Read and write** → generate, copy `npm_…`.
 
 ```sh
-npm i -g @yourNpmUser/codefacts
-
-codefacts init        # Telegram token+chat id, repo path, interest, times
-codefacts start       # boots the iii engine + all providers + the worker
-codefacts mine        # analyze a slice now (runs claude)
-codefacts graph       # see the knowledge graph
-codefacts console     # observability dashboard @ 127.0.0.1:3113
-codefacts emit        # push one insight to Telegram (needs a real bot token)
-codefacts status
+npm config set //registry.npmjs.org/:_authToken npm_XXXXXXXX
 ```
 
-Get a Telegram bot token from **@BotFather** (`/newbot`), send the bot a message,
-then get your chat id:
-`curl "https://api.telegram.org/bot<TOKEN>/getUpdates"` → `.result[0].message.chat.id`.
+(Or skip this and append `--otp=<6-digit-code>` to each publish below.)
 
-## 4. Uninstall
+## Publish (platform packages first, then main)
 
 ```sh
-codefacts uninstall                       # stops daemon, removes login item, purges state
-npm rm -g @yourNpmUser/codefacts
+cd ~/Work/codefacts/packaging/npm-platforms/darwin-arm64 && npm publish --access public
+cd ../linux-x64                                          && npm publish --access public
+cd ../../npm                                             && npm publish --access public
 ```
 
-## Cross-platform (later)
+## Install + try
 
-The bundled binary is macOS arm64 only (`os`/`cpu` guards will refuse other
-platforms). For all platforms, build per-target binaries in CI
-(`.github/workflows/release.yml`) and either:
+```sh
+npm i -g codefact          # pulls the matching platform binary automatically
+codefacts init             # Telegram token+chat, repo, interest, times
+codefacts start            # boots engine + providers + worker
+codefacts mine && codefacts graph
+codefacts console          # dashboard @ 127.0.0.1:3113
+codefacts emit             # push to Telegram (needs a real BotFather token)
+```
 
-- publish per-platform optional-dependency packages (esbuild-style), or
-- publish a thin wrapper whose `postinstall` downloads the matching
-  checksummed binary from GitHub Releases.
+## Adding more platforms later
+
+Build the binary for the target (`cross`/Docker/CI), add
+`packaging/npm-platforms/<os>-<arch>/` with a matching `package.json`
+(`os`/`cpu` set) + the `codefacts` binary, add it to the main package's
+`optionalDependencies`, bump versions, and publish. Shim resolves
+`codefact-${process.platform}-${process.arch}` automatically.
