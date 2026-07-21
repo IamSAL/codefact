@@ -1,0 +1,22 @@
+{
+  "version": "0.1.0",
+  "description": "Codebase-knowledge engine that pushes insights to Telegram",
+  "homepage": "https://github.com/OWNER/codefact",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/OWNER/codefact/releases/download/v0.1.0/codefact-x86_64-pc-windows-msvc.zip",
+      "hash": "REPLACE_WITH_SHA256"
+    }
+  },
+  "bin": ["codefact.exe"],
+  "notes": "Requires the 'iii' engine and Claude Code ('claude') on PATH. Run: codefact init",
+  "checkver": "github",
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/OWNER/codefact/releases/download/v$version/codefact-x86_64-pc-windows-msvc.zip"
+      }
+    }
+  }
+}

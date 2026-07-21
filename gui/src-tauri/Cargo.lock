@@ -335,7 +335,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "codefacts-core"
+name = "codefact-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -351,10 +351,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "codefacts-desktop"
+name = "codefact-desktop"
 version = "0.1.0"
 dependencies = [
- "codefacts-core",
+ "codefact-core",
  "serde",
  "serde_json",
  "tauri",

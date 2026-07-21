@@ -1,21 +1,21 @@
-//! codefacts tray app (Tauri v2). A thin front-end over the CLI + core: the tray
-//! menu triggers `codefacts …`, the settings/messages window reads & writes the
-//! shared config via `codefacts-core`. It never schedules — the worker/daemon does.
+//! codefact tray app (Tauri v2). A thin front-end over the CLI + core: the tray
+//! menu triggers `codefact …`, the settings/messages window reads & writes the
+//! shared config via `codefact-core`. It never schedules — the worker/daemon does.
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use std::process::Command;
 
-use codefacts_core::config::Config;
-use codefacts_core::paths;
-use codefacts_core::secrets::Secrets;
+use codefact_core::config::Config;
+use codefact_core::paths;
+use codefact_core::secrets::Secrets;
 use serde::Deserialize;
 use serde_json::{json, Value};
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem};
 use tauri::tray::TrayIconBuilder;
 use tauri::Manager;
 
-fn run_codefacts(args: &[&str]) {
-    let _ = Command::new("codefacts").args(args).spawn();
+fn run_codefact(args: &[&str]) {
+    let _ = Command::new("codefact").args(args).spawn();
 }
 
 fn show_window(app: &tauri::AppHandle, tab: &str) {
@@ -135,9 +135,9 @@ fn main() {
             }
             builder
                 .on_menu_event(|app, event| match event.id().as_ref() {
-                    "emit" => run_codefacts(&["emit"]),
-                    "mine" => run_codefacts(&["mine"]),
-                    "console" => run_codefacts(&["console"]),
+                    "emit" => run_codefact(&["emit"]),
+                    "mine" => run_codefact(&["mine"]),
+                    "console" => run_codefact(&["console"]),
                     "settings" => show_window(app, "settings"),
                     "messages" => show_window(app, "messages"),
                     "pause" => {
@@ -150,5 +150,5 @@ fn main() {
             Ok(())
         })
         .run(tauri::generate_context!())
-        .expect("error while running codefacts tray");
+        .expect("error while running codefact tray");
 }

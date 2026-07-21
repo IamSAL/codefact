@@ -1,4 +1,4 @@
-//! codefacts-core — the engine-agnostic knowledge logic. Pure and testable;
+//! codefact-core — the engine-agnostic knowledge logic. Pure and testable;
 //! the iii worker supplies real `Store`/`Engine`/`Sender` implementations.
 
 pub mod config;

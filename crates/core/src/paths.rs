@@ -1,4 +1,4 @@
-//! Filesystem locations: per-OS config/data dirs (central) or `.codefacts/` in
+//! Filesystem locations: per-OS config/data dirs (central) or `.codefact/` in
 //! the repo (opt-in), plus a stable per-repo id.
 
 use crate::config::Storage;
@@ -7,7 +7,7 @@ use sha2::{Digest, Sha256};
 use std::path::PathBuf;
 
 fn dirs() -> anyhow::Result<ProjectDirs> {
-    ProjectDirs::from("dev", "codefacts", "codefacts")
+    ProjectDirs::from("dev", "codefact", "codefact")
         .ok_or_else(|| anyhow::anyhow!("could not resolve OS project directories"))
 }
 
@@ -36,7 +36,7 @@ pub fn repo_id(repo_path: &str) -> String {
 pub fn data_dir_for(repo_path: &str, storage: Storage) -> anyhow::Result<PathBuf> {
     match storage {
         Storage::Central => Ok(central_data_dir()?.join(repo_id(repo_path))),
-        Storage::InRepo => Ok(PathBuf::from(repo_path).join(".codefacts")),
+        Storage::InRepo => Ok(PathBuf::from(repo_path).join(".codefact")),
     }
 }
 

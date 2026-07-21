@@ -1,5 +1,5 @@
 [package]
-name = "codefacts-core"
+name = "codefact-core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true

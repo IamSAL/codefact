@@ -1,17 +1,17 @@
-//! The codefacts iii worker, run in-process by `codefacts __worker` (spawned by
-//! `codefacts start`). Wires the engine's triggers/functions to `codefacts-core`,
+//! The codefact iii worker, run in-process by `codefact __worker` (spawned by
+//! `codefact start`). Wires the engine's triggers/functions to `codefact-core`,
 //! backing the graph with iii-state.
 
 use std::sync::Arc;
 use std::time::Duration;
 
-use codefacts_core::config::Config;
-use codefacts_core::engine::ClaudeEngine;
-use codefacts_core::graph::Graph;
-use codefacts_core::miner::{self, SliceInput};
-use codefacts_core::secrets::Secrets;
-use codefacts_core::sender::TelegramSender;
-use codefacts_core::{paths, run_emit, run_mine};
+use codefact_core::config::Config;
+use codefact_core::engine::ClaudeEngine;
+use codefact_core::graph::Graph;
+use codefact_core::miner::{self, SliceInput};
+use codefact_core::secrets::Secrets;
+use codefact_core::sender::TelegramSender;
+use codefact_core::{paths, run_emit, run_mine};
 
 use iii_sdk::builtin_triggers::{CronTriggerConfig, HttpMethod, HttpTriggerConfig, IIITrigger};
 use iii_sdk::errors::Error;
@@ -53,12 +53,12 @@ impl Ctx {
 pub async fn run() -> anyhow::Result<()> {
     let url = std::env::var("III_URL").unwrap_or_else(|_| "ws://localhost:49134".to_string());
 
-    let config_path = std::env::var("CODEFACTS_CONFIG")
+    let config_path = std::env::var("codefact_CONFIG")
         .map(std::path::PathBuf::from)
         .or_else(|_| paths::config_path())?;
     let config = Config::load(&config_path)?;
 
-    let secrets_path = std::env::var("CODEFACTS_SECRETS")
+    let secrets_path = std::env::var("codefact_SECRETS")
         .map(std::path::PathBuf::from)
         .or_else(|_| paths::secrets_path())?;
     let secrets = Secrets::load(&secrets_path).ok();
@@ -70,33 +70,33 @@ pub async fn run() -> anyhow::Result<()> {
         secrets,
     });
 
-    register(&client, &ctx, "codefacts::status", status);
-    register(&client, &ctx, "codefacts::mine", mine);
-    register(&client, &ctx, "codefacts::emit", emit);
-    register(&client, &ctx, "codefacts::tick", tick);
+    register(&client, &ctx, "codefact::status", status);
+    register(&client, &ctx, "codefact::mine", mine);
+    register(&client, &ctx, "codefact::emit", emit);
+    register(&client, &ctx, "codefact::tick", tick);
 
     let mut _handles = Vec::new();
-    for expr in codefacts_core::config::times_to_cron(&ctx.config.schedule.times)? {
+    for expr in codefact_core::config::times_to_cron(&ctx.config.schedule.times)? {
         _handles.push(
             client.register_trigger(
-                IIITrigger::Cron(CronTriggerConfig::new(expr)).for_function("codefacts::tick"),
+                IIITrigger::Cron(CronTriggerConfig::new(expr)).for_function("codefact::tick"),
             )?,
         );
     }
     _handles.push(
         client.register_trigger(
             IIITrigger::Http(HttpTriggerConfig::new("/emit").method(HttpMethod::Post))
-                .for_function("codefacts::emit"),
+                .for_function("codefact::emit"),
         )?,
     );
     _handles.push(
         client.register_trigger(
             IIITrigger::Http(HttpTriggerConfig::new("/mine").method(HttpMethod::Post))
-                .for_function("codefacts::mine"),
+                .for_function("codefact::mine"),
         )?,
     );
 
-    println!("codefacts worker ready (engine: {url})");
+    println!("codefact worker ready (engine: {url})");
     tokio::signal::ctrl_c().await?;
     client.shutdown();
     Ok(())
@@ -125,7 +125,7 @@ fn handler_err(e: anyhow::Error) -> Error {
 async fn status(ctx: Arc<Ctx>, _req: Value) -> Result<Value, Error> {
     Ok(json!({
         "ok": true,
-        "worker": "codefacts",
+        "worker": "codefact",
         "version": env!("CARGO_PKG_VERSION"),
         "repos": ctx.config.repos.len(),
         "times": ctx.config.schedule.times,
@@ -184,7 +184,7 @@ async fn tick(ctx: Arc<Ctx>, _req: Value) -> Result<Value, Error> {
     let mined = ctx
         .client
         .trigger(TriggerRequest {
-            function_id: "codefacts::mine".to_string(),
+            function_id: "codefact::mine".to_string(),
             payload: json!({}),
             action: None,
             timeout_ms: Some(300_000),
@@ -193,7 +193,7 @@ async fn tick(ctx: Arc<Ctx>, _req: Value) -> Result<Value, Error> {
     let emitted = ctx
         .client
         .trigger(TriggerRequest {
-            function_id: "codefacts::emit".to_string(),
+            function_id: "codefact::emit".to_string(),
             payload: json!({}),
             action: None,
             timeout_ms: None,

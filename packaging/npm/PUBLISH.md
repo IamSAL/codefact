@@ -41,17 +41,17 @@ cd ../../npm                                             && npm publish --access
 
 ```sh
 npm i -g codefact          # pulls the matching platform binary automatically
-codefacts init             # Telegram token+chat, repo, interest, times
-codefacts start            # boots engine + providers + worker
-codefacts mine && codefacts graph
-codefacts console          # dashboard @ 127.0.0.1:3113
-codefacts emit             # push to Telegram (needs a real BotFather token)
+codefact init             # Telegram token+chat, repo, interest, times
+codefact start            # boots engine + providers + worker
+codefact mine && codefact graph
+codefact console          # dashboard @ 127.0.0.1:3113
+codefact emit             # push to Telegram (needs a real BotFather token)
 ```
 
 ## Adding more platforms later
 
 Build the binary for the target (`cross`/Docker/CI), add
 `packaging/npm-platforms/<os>-<arch>/` with a matching `package.json`
-(`os`/`cpu` set) + the `codefacts` binary, add it to the main package's
+(`os`/`cpu` set) + the `codefact` binary, add it to the main package's
 `optionalDependencies`, bump versions, and publish. Shim resolves
 `codefact-${process.platform}-${process.arch}` automatically.

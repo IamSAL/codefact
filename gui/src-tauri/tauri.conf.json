@@ -1,15 +1,15 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "codefacts",
+  "productName": "codefact",
   "version": "0.1.0",
-  "identifier": "dev.codefacts.desktop",
+  "identifier": "dev.codefact.desktop",
   "build": {
     "frontendDist": "../dist"
   },
   "app": {
     "windows": [
       {
-        "title": "codefacts",
+        "title": "codefact",
         "label": "main",
         "width": 760,
         "height": 600,

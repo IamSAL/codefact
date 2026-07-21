@@ -2,7 +2,7 @@
 //! Response shapes verified live: get → raw value, list → array of values.
 
 use async_trait::async_trait;
-use codefacts_core::store::Store;
+use codefact_core::store::Store;
 use iii_sdk::IIIClient;
 use iii_sdk::protocol::TriggerRequest;
 use serde_json::{Value, json};

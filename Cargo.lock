@@ -227,14 +227,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c8d4a3bb8b1e0c1050499d1815f5ab16d04f0959b233085fb31653fbfc9d98f9"
 
 [[package]]
-name = "codefacts-cli"
+name = "codefact-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
  "async-trait",
  "auto-launch",
  "clap",
- "codefacts-core",
+ "codefact-core",
  "iii-helpers",
  "iii-sdk",
  "serde_json",
@@ -242,7 +242,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "codefacts-core"
+name = "codefact-core"
 version = "0.1.0"
 dependencies = [
  "anyhow",

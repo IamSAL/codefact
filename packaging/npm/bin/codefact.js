@@ -9,7 +9,7 @@ let bin;
 try {
   bin = path.join(
     path.dirname(require.resolve(pkg + "/package.json")),
-    "codefacts"
+    "codefact"
   );
 } catch {
   console.error(

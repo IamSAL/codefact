@@ -1,11 +1,11 @@
 #!/bin/sh
-# codefacts installer. Downloads a prebuilt, checksum-verified binary.
+# codefact installer. Downloads a prebuilt, checksum-verified binary.
 # Usage: curl -fsSL .../install.sh | sh
 set -eu
 
-REPO="${CODEFACTS_REPO:-OWNER/codefacts}"
-VERSION="${CODEFACTS_VERSION:-latest}"
-BINDIR="${CODEFACTS_BINDIR:-/usr/local/bin}"
+REPO="${codefact_REPO:-OWNER/codefact}"
+VERSION="${codefact_VERSION:-latest}"
+BINDIR="${codefact_BINDIR:-/usr/local/bin}"
 
 os="$(uname -s)"; arch="$(uname -m)"
 case "$os" in
@@ -28,7 +28,7 @@ fi
 
 tmp="$(mktemp -d)"
 trap 'rm -rf "$tmp"' EXIT
-for bin in codefacts; do
+for bin in codefact; do
   url="$base/${bin}-${target}"
   echo "↓ $url"
   curl -fsSL "$url" -o "$tmp/$bin"
@@ -37,4 +37,4 @@ for bin in codefacts; do
   chmod +x "$tmp/$bin"
   install "$tmp/$bin" "$BINDIR/$bin" 2>/dev/null || sudo install "$tmp/$bin" "$BINDIR/$bin"
 done
-echo "✓ installed to $BINDIR. Prereqs: install 'iii' (iii.dev) and 'claude'. Then: codefacts init"
+echo "✓ installed to $BINDIR. Prereqs: install 'iii' (iii.dev) and 'claude'. Then: codefact init"

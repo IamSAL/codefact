@@ -3,8 +3,8 @@
   "version": "0.1.1",
   "description": "Codebase-knowledge engine → Telegram (native binary, on the iii framework)",
   "bin": {
-    "codefacts": "bin/codefacts.js",
-    "codefact": "bin/codefacts.js"
+    "codefacts": "bin/codefact.js",
+    "codefact": "bin/codefact.js"
   },
   "files": [
     "bin/"
