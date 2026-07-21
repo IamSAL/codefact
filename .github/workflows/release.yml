@@ -1,0 +1,50 @@
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: macos-latest, target: aarch64-apple-darwin }
+          - { os: macos-13, target: x86_64-apple-darwin }
+          - { os: ubuntu-latest, target: x86_64-unknown-linux-gnu }
+          - { os: ubuntu-latest, target: aarch64-unknown-linux-gnu }
+          - { os: windows-latest, target: x86_64-pc-windows-msvc }
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }} -p codefacts-cli
+      - name: Package + checksums
+        shell: bash
+        run: |
+          bindir="target/${{ matrix.target }}/release"
+          ext=""; [[ "${{ matrix.target }}" == *windows* ]] && ext=".exe"
+          for b in codefacts; do
+            out="${b}-${{ matrix.target }}${ext}"
+            cp "$bindir/${b}${ext}" "$out"
+            (sha256sum "$out" || shasum -a 256 "$out") > "$out.sha256"
+          done
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            codefacts-*${{ matrix.target }}*
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo install cargo-deny --locked
+      - run: cargo deny check
