@@ -1,6 +1,6 @@
 {
   "name": "codefact",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Codebase-knowledge engine → Telegram (native binary, on the iii framework)",
   "bin": {
     "codefacts": "bin/codefact.js",
@@ -10,8 +10,8 @@
     "bin/"
   ],
   "optionalDependencies": {
-    "codefact-darwin-arm64": "0.1.1",
-    "codefact-linux-x64": "0.1.1"
+    "codefact-darwin-arm64": "0.1.2",
+    "codefact-linux-x64": "0.1.2"
   },
   "engines": {
     "node": ">=18"
